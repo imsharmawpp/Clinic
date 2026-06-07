@@ -51,16 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $step === '2') {
         $errors[] = 'Database name and username are required.';
     } else {
         try {
-            $pdo = new PDO("mysql:host=$host;charset=utf8mb4", $user, $pass, [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+            // Connect directly to the specified database (on shared hosting, DB is pre-created)
+            $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass, [PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
 
-            // Create DB
-            $pdo->exec("CREATE DATABASE IF NOT EXISTS `$dbname` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            $pdo->exec("USE `$dbname`");
-
-            // Run schema
+            // Run schema — skip CREATE DATABASE and USE statements (not allowed on shared hosting)
             $sql = file_get_contents(__DIR__ . '/../database/migrations/001_schema.sql');
-            foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
-                if (empty($stmt) || str_starts_with($stmt, '--')) continue;
+            $statements = array_filter(array_map('trim', explode(';', $sql)));
+            foreach ($statements as $stmt) {
+                if (empty($stmt)) continue;
+                // Skip comments
+                if (str_starts_with($stmt, '--')) continue;
+                // Skip CREATE DATABASE and USE statements (shared hosting doesn't allow these)
+                $upper = strtoupper(ltrim($stmt));
+                if (str_starts_with($upper, 'CREATE DATABASE')) continue;
+                if (str_starts_with($upper, 'USE ')) continue;
                 try { $pdo->exec($stmt); } catch (PDOException $e) { if ($e->getCode() !== '23000') {} }
             }
 
