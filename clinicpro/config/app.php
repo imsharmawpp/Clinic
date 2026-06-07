@@ -3,11 +3,21 @@
 
 define('APP_NAME', 'ClinicPro');
 define('APP_VERSION', '1.0.0');
-define('APP_URL', getenv('APP_URL') ?: 'http://localhost/clinicpro/public');
+
+// Auto-detect APP_URL if not set in .env
+$appUrl = getenv('APP_URL');
+if (!$appUrl) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $script = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+    $appUrl = $protocol . '://' . $host . rtrim($script, '/');
+}
+define('APP_URL', rtrim($appUrl, '/'));
+
 define('APP_ENV', getenv('APP_ENV') ?: 'production');
 define('APP_DEBUG', APP_ENV === 'development');
 define('APP_KEY', getenv('APP_KEY') ?: 'base64:ClinicProSecretKey2024XYZ!@#$%^&*');
-define('APP_TIMEZONE', 'Asia/Kolkata');
+define('APP_TIMEZONE', getenv('APP_TIMEZONE') ?: 'Asia/Kolkata');
 define('APP_CURRENCY', '₹');
 define('APP_CURRENCY_CODE', 'INR');
 

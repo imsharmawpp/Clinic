@@ -43,16 +43,18 @@ class PharmacyController {
         $categories = $categories->fetchAll(PDO::FETCH_COLUMN);
 
         // Summary stats
-        $stats = $this->db->query("
+        $statsStmt = $this->db->prepare("
             SELECT
                 COUNT(DISTINCT m.id) AS total_medicines,
-                SUM(ms.quantity) AS total_units,
-                SUM(ms.quantity * m.selling_price) AS total_value,
-                SUM(ms.quantity < 10) AS low_stock_count
+                COALESCE(SUM(ms.quantity),0) AS total_units,
+                COALESCE(SUM(ms.quantity * m.selling_price),0) AS total_value,
+                SUM(CASE WHEN COALESCE(ms.quantity,0) < 10 THEN 1 ELSE 0 END) AS low_stock_count
             FROM medicines m
             LEFT JOIN medicine_stock ms ON ms.medicine_id=m.id
-            WHERE m.clinic_id=" . clinic_id() . " AND m.status='active'
-        ")->fetch();
+            WHERE m.clinic_id=? AND m.status='active'
+        ");
+        $statsStmt->execute([clinic_id()]);
+        $stats = $statsStmt->fetch();
 
         render('pharmacy/index', compact('medicines','categories','search','category','filter','stats'));
     }

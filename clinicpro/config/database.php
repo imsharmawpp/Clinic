@@ -27,7 +27,11 @@ class Database {
                 self::$instance = new PDO($dsn, DB_USER, DB_PASS, $options);
             } catch (PDOException $e) {
                 error_log('DB Connection failed: ' . $e->getMessage());
-                die(json_encode(['error' => 'Database connection failed.']));
+                if (APP_DEBUG) {
+                    die('<h3>Database Connection Failed</h3><p>' . htmlspecialchars($e->getMessage()) . '</p><p>Check your <code>.env</code> file database credentials.</p>');
+                }
+                http_response_code(503);
+                die('<h3>Service Temporarily Unavailable</h3><p>Database connection failed. Please contact the administrator.</p>');
             }
         }
         return self::$instance;
