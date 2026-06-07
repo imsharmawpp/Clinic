@@ -1,0 +1,25 @@
+# Environment
+.env
+
+# Storage
+storage/logs/*.log
+
+# Uploads (keep directory structure, ignore user files)
+public/uploads/*
+!public/uploads/.gitkeep
+!public/uploads/.htaccess
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.bak

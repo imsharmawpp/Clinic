@@ -1,0 +1,25 @@
+# ClinicPro Root .htaccess
+# This redirects all requests to the public/ directory
+# Used when the entire clinicpro/ folder is placed in public_html
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If the request is NOT already to the public directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteCond %{REQUEST_URI} !^/clinicpro/public/
+
+    # Block access to application files
+    RewriteRule ^app/ - [F,L]
+    RewriteRule ^config/ - [F,L]
+    RewriteRule ^database/ - [F,L]
+    RewriteRule ^docs/ - [F,L]
+    RewriteRule ^storage/ - [F,L]
+    RewriteRule ^views/ - [F,L]
+    RewriteRule ^vendor/ - [F,L]
+    RewriteRule ^\.env$ - [F,L]
+    RewriteRule ^\.git - [F,L]
+
+    # Redirect everything else to public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
