@@ -1,0 +1,50 @@
+/* clinicpro.css — additional styles */
+
+/* Print styles */
+@media print {
+  .cp-sidebar, .cp-topbar, .btn, .flash-container,
+  form button, a.btn-cp-primary, a.btn-cp-outline,
+  nav, .topbar-right, [onclick] { display: none !important; }
+  .cp-main { margin-left: 0 !important; }
+  .cp-card { box-shadow: none !important; border: 1px solid #ddd; }
+  body { background: white; }
+  .cp-content { padding: 0; }
+}
+
+/* Smooth transitions */
+.cp-nav-item a,
+.stat-card,
+.btn-cp-primary,
+.btn-cp-outline,
+.cp-table tbody tr { transition: all .18s ease; }
+
+/* Form validation feedback */
+.form-control.is-invalid { border-color: #dc3545; }
+.form-control.is-valid   { border-color: #20c997; }
+
+/* Loading spinner */
+.cp-spinner {
+  display: inline-block; width: 20px; height: 20px;
+  border: 2px solid rgba(26,110,255,.3);
+  border-top-color: #1a6eff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f0f4fb; }
+::-webkit-scrollbar-thumb { background: #c0cce0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #1a6eff; }
+
+/* DataTable overrides */
+.dataTables_wrapper .dataTables_filter input { border-radius: 10px !important; border: 1.5px solid #e2e8f5 !important; }
+.dataTables_wrapper .dataTables_length select { border-radius: 10px !important; }
+
+/* Mobile sidebar overlay */
+@media (max-width:991px) {
+  #sidebarOverlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:999; }
+  #sidebarOverlay.active { display:block; }
+  .cp-sidebar.open { z-index: 1000; }
+}
